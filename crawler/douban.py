@@ -1,4 +1,5 @@
 import requests
+import crawler.douban_export_excel
 from lxml import html
 import re
 
@@ -12,12 +13,14 @@ def crawl(origin_url):
     root = html.fromstring(page)
     contents = root.xpath('//*[@id="content"]/div/div[1]/div[2]/div/table/tbody/tr/td/a')
     for content in contents:
+        # TODO 这里可以做一波优化，启动多线程爬
         handle_item_list(content.text)
 
-    print(datas)
+    crawler.douban_export_excel.export_excel(datas)
 
 
 def handle_item_list(small_type):
+    # TODO 此处只拉取了类目的前20条，可以修改分页代码拉取更多信息
     item_list_url = 'https://book.douban.com/tag/' + small_type + '?start=0&type=T'
     resp = requests.get(item_list_url)
     page = resp.content
@@ -26,7 +29,7 @@ def handle_item_list(small_type):
 
     for item in items:
         global item_id
-        print(item.xpath('h2/a/@title')[0])
+        # TODO 拉取了部分信息，可以拉取热门评价、详细介绍等
         data = {
             'id': item_id,
             'name': item.xpath('h2/a/@title')[0],
@@ -46,16 +49,7 @@ def handle_item_list(small_type):
         else:
             data['rank_num'] = 0
         item_id += 1
-        print(data)
         datas.append(data)
-
-
-def handle_data():
-    pass
-
-
-def export_data():
-    pass
 
 
 if __name__ == '__main__':
