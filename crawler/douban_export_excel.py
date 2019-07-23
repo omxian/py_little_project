@@ -18,4 +18,4 @@ def export_excel(datas):
     try:
         wb.save('test.xls')
     except PermissionError as e:
-        print(e + " excel 打开中，请关闭后再试")
+        print(str(e) + " excel 打开中，请关闭后再试")

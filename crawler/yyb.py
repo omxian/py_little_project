@@ -61,9 +61,9 @@ def export_excel(datas, category_index):
         item = [data['appName'],
                 data['authorName'],
                 data['apkUrl'],
-                datetime.utcfromtimestamp(data['apkPublishTime']).strftime('%Y-%m-%d %H:%M:%S'),
+                datetime.utcfromtimestamp(data['apkPublishTime']).strftime('%Y-%m-%d'),
                 data['newFeature'],
-                data['averageRating'],
+                "%.2f" % data['averageRating'],  # 四舍五入保留两位小数
                 data['appRatingInfo']['ratingCount'],
                 data['appDownCount'],
                 ]
@@ -82,10 +82,17 @@ def init_wb():
     # TODO 设置表格宽度
     wb_title = ['应用名', '公司名称', '下载链接', '应用发布时间', '新功能说明', '平均分数', '评分人数', '下载量']
     wb = xlwt.Workbook()
+    char_length = 367  # 367大约是一个字符的宽度
     for category in categorys:
         ws = wb.add_sheet(category)
+        ws.col(3).width = char_length * 11
+        ws.col(7).width = char_length * 10
         crawler.excel_helper.write_column(ws, wb_title, 0, 0)
-    wb.save('yyb.xls')
+
+    try:
+        wb.save('yyb.xls')
+    except PermissionError as e:
+        print(str(e) + " excel 打开中，请关闭后再试")
 
 
 if __name__ == '__main__':
