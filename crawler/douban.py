@@ -7,6 +7,7 @@ datas = []
 item_id = 1
 
 
+# TODO 添加一些GUI的展示
 def crawl(origin_url):
     resp = requests.get(origin_url)
     page = resp.content
