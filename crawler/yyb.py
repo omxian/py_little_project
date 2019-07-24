@@ -5,8 +5,7 @@ import xlrd
 from datetime import datetime
 import crawler.excel_helper
 from xlutils.copy import copy
-from crawler.progress_tool import print_progress_bar
-import time
+import sys
 
 # 分类ID
 categorys = {
@@ -40,7 +39,6 @@ def crawl():
     from_index = 0
     count = 30
     category_key = list(categorys.keys())
-    print_progress_bar(0, len(category_key), prefix='Progress:', suffix='Complete', length=len(category_key))
     progress = 1
     url = "https://sj.qq.com/myapp/cate/appList.htm?orgame=1&categoryId=%d&pageSize=%d&pageContext=%d"
     for name, category_id in categorys.items():
@@ -50,8 +48,8 @@ def crawl():
         page = resp.content
         datas = json.loads(page)
         export_excel(datas['obj'], category_index)
-        time.sleep(0.1)
-        print_progress_bar(progress, len(category_key), prefix='Progress:', suffix='Complete', length=len(category_key))
+        sys.stdout.write("\r" + str(progress) + "/" + str(len(category_key)))
+        sys.stdout.flush()
         progress += 1
 
 
@@ -78,8 +76,6 @@ def export_excel(datas, category_index):
 
 
 def init_wb():
-    # TODO try catch
-    # TODO 设置表格宽度
     wb_title = ['应用名', '公司名称', '下载链接', '应用发布时间', '新功能说明', '平均分数', '评分人数', '下载量']
     wb = xlwt.Workbook()
     char_length = 367  # 367大约是一个字符的宽度
