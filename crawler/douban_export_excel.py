@@ -8,7 +8,7 @@ def export_excel(datas):
     # TODO 根据small_type生成新标签页
     titles = ["id", "name", "author", "item_url", "small_type", "rank", "rank_num"]
     wb = xlwt.Workbook()
-    ws = wb.add_sheet('A Test Sheet')
+    ws = wb.add_sheet('douban')
     crawler.excel_helper.write_column(ws, titles)
 
     start_row_index = 1
@@ -16,6 +16,6 @@ def export_excel(datas):
         crawler.excel_helper.write_column(ws, item_data.values(), start_row_index)
         start_row_index += 1
     try:
-        wb.save('test.xls')
+        wb.save('douban.xls')
     except PermissionError as e:
         print(str(e) + " excel 打开中，请关闭后再试")
